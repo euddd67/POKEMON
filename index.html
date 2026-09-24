@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokédex e Batalha - XNDZ A.I.</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; background-color: #2c3e50; color: white; padding: 20px; }
+        #game { background: white; color: #333; padding: 20px; border-radius: 15px; width: 350px; margin: auto; }
+        .pokemon-card { font-size: 16px; margin: 5px; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 15px; cursor: pointer; background: #f1c40f; border: none; border-radius: 5px; margin: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="game">
+    <h2>Pokédex</h2>
+    <div id="lista-captura">Nenhum Pokémon capturado.</div>
+    <button onclick="tentarCapturar()">Tentar Capturar Pokémon</button>
+
+    <div id="batalha-area" style="display:none; margin-top:20px; border-top: 2px solid #ddd; padding-top: 10px;">
+        <h3>Escolha seu Pokémon:</h3>
+        <select id="escolha"></select>
+        <button onclick="iniciarBatalha()">Batalhar!</button>
+    </div>
+
+    <div id="arena" style="display:none; margin-top: 20px;">
+        <p>Inimigo: <span id="nome-inimigo"></span> (HP: <span id="hp-inimigo">0</span>)</p>
+        <p>Seu: <span id="nome-jogador"></span> (HP: <span id="hp-jogador">0</span>)</p>
+        <button onclick="atacar()">Atacar!</button>
+    </div>
+</div>
+
+<script>
+    const todosPokemons = { "Pikachu": 100, "Bulbasaur": 120, "Charmander": 110, "Squirtle": 115, "Eevee": 90, "Mewtwo": 150 };
+    let capturados = []; 
+    let hpInimigo = 0;
+    let hpJogador = 0;
+
+    function tentarCapturar() {
+        const nomes = Object.keys(todosPokemons);
+        const sorteado = nomes[Math.floor(Math.random() * nomes.length)];
+        
+        if (!capturados.includes(sorteado)) {
+            capturados.push(sorteado);
+            alert("Você capturou um " + sorteado + "!");
+            atualizarMenu();
+        } else {
+            alert("O " + sorteado + " fugiu! Tente novamente.");
+        }
+    }
+
+    function atualizarMenu() {
+        const select = document.getElementById('escolha');
+        const lista = document.getElementById('lista-captura');
+        
+        lista.innerHTML = "Capturados: " + capturados.join(", ");
+        select.innerHTML = "";
+        
+        capturados.forEach(p => {
+            select.innerHTML += `<option value="${p}">${p}</option>`;
+        });
+        
+        document.getElementById('batalha-area').style.display = "block";
+    }
+
+    function iniciarBatalha() {
+        const nomes = Object.keys(todosPokemons);
+        const nomeInimigo = nomes[Math.floor(Math.random() * nomes.length)];
+        const nomeJogador = document.getElementById('escolha').value;
+        
+        hpInimigo = todosPokemons[nomeInimigo];
+        hpJogador = todosPokemons[nomeJogador];
+        
+        document.getElementById('nome-inimigo').innerText = nomeInimigo;
+        document.getElementById('hp-inimigo').innerText = hpInimigo;
+        document.getElementById('nome-jogador').innerText = nomeJogador;
+        document.getElementById('hp-jogador').innerText = hpJogador;
+        document.getElementById('arena').style.display = "block";
+    }
+
+    function atacar() {
+        // Lógica de ataque mantida
+        hpInimigo -= 15;
+        hpJogador -= 10;
+        document.getElementById('hp-inimigo').innerText = Math.max(0, hpInimigo);
+        document.getElementById('hp-jogador').innerText = Math.max(0, hpJogador);
+
+        if (hpInimigo <= 0) { alert("Você venceu!"); document.getElementById('arena').style.display = "none"; }
+    }
+</script>
+</body>
+</html>
